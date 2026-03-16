@@ -4,9 +4,12 @@ Personal dotfiles for macOS and Linux with Neovim (LazyVim), Zsh, Starship, and 
 
 ## Requirements
 
-- macOS or Linux
-- Zsh
-- Git
+- Supported platforms:
+  - macOS (Homebrew)
+  - Ubuntu/Debian (apt)
+  - Arch Linux (pacman)
+- `curl` and `git`
+- Linux only: `sudo` access for package installation
 
 ## Quick Install
 
@@ -15,6 +18,26 @@ git clone https://github.com/yourusername/dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
 ./install.sh
 ```
+
+The installer handles package dependencies (brew/apt/pacman), nvm, and Node LTS.
+
+### Installer Options
+
+```bash
+./install.sh --dry-run
+./install.sh --skip-shell-change
+```
+
+### Safe Testing (no changes to your real environment)
+
+```bash
+export TEST_HOME="$(mktemp -d)"
+HOME="$TEST_HOME" ./install.sh --dry-run
+rm -rf "$TEST_HOME"
+```
+
+This uses a temporary HOME directory and dry-run mode so your real dotfiles
+and shell config are untouched.
 
 ## What's Included
 
@@ -25,47 +48,32 @@ cd ~/.dotfiles
 - **Tmux** - Terminal multiplexer config
 - **OpenCode** - Agent definitions and config
 
-## Prerequisites by Platform
+## Platform Notes
+
+You do not need to pre-install dependencies manually. `./install.sh` installs required packages,
+installs `nvm`, and installs Node.js LTS through `nvm`.
+
+The sections below are only for manual preparation or troubleshooting.
 
 ### macOS
 
 ```bash
 # Install Homebrew
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-# Install essentials
-brew install starship node npm git zsh
-
-# Set zsh as default shell
-chsh -s /bin/zsh
-
-# Install nvm (Node Version Manager)
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-source ~/.zshrc
-nvm install 20
 ```
 
-### Linux
+### Ubuntu/Debian
 
 ```bash
-# Ubuntu/Debian
 sudo apt update
-sudo apt install git zsh curl build-essential
+sudo apt install git curl sudo
+```
 
-# Install Homebrew (optional but recommended)
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+### Arch Linux (pacman)
 
-# Install starship
-brew install starship
-
-# Install nvm
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-nvm install 20
-
-# Set zsh as default shell
-chsh -s /bin/zsh
+```bash
+sudo pacman -Syu
+sudo pacman -S --noconfirm git curl sudo
 ```
 
 ## Post-Install Setup
@@ -154,6 +162,34 @@ which node  # Should return a path
 ### LazyVim not loading extras
 
 Run `:Lazy` to sync and check for errors.
+
+## Optional Tools (Manual Install)
+
+### Ghostty (macOS)
+
+Option 1: Homebrew cask
+
+```bash
+brew install --cask ghostty
+```
+
+Option 2: Manual download
+
+1. Download the latest release from the Ghostty website.
+2. Install the app in `/Applications`.
+3. Launch Ghostty once to generate its support directory.
+
+The config will already be linked at `~/.config/ghostty/config` after running the installer.
+
+### OpenCode CLI
+
+1. Follow the official OpenCode install instructions for your platform.
+2. Ensure the `opencode` binary is on your PATH (the default installer uses `~/.opencode/bin`).
+3. Verify with:
+
+```bash
+opencode --version
+```
 
 ## License
 
