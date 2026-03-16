@@ -296,6 +296,79 @@ install_tpm() {
   fi
 }
 
+install_tpm_plugins() {
+  local installer="$HOME/.tmux/plugins/tpm/bin/install_plugins"
+  if [ ! -x "$installer" ]; then
+    return
+  fi
+
+  if [ "$DRY_RUN" -eq 1 ]; then
+    printf "+ %s\n" "$installer"
+    return
+  fi
+
+  if ! "$installer" >/dev/null 2>&1; then
+    warn "tmux plugins were not auto-installed; run prefix + I inside tmux"
+  fi
+}
+
+install_meslo_font() {
+  local os="$1"
+  if [ "$os" != "macos" ]; then
+    return
+  fi
+
+  if ! command -v brew >/dev/null 2>&1; then
+    warn "Homebrew not found, skipping Meslo Nerd Font install"
+    return
+  fi
+
+  if brew list --cask font-meslo-lg-nerd-font >/dev/null 2>&1; then
+    return
+  fi
+
+  log "Installing Meslo Nerd Font via Homebrew cask..."
+  run_cmd brew tap homebrew/cask-fonts
+  run_cmd brew install --cask font-meslo-lg-nerd-font
+}
+
+install_ghostty() {
+  local os="$1"
+  if [ "$os" != "macos" ]; then
+    return
+  fi
+
+  if ! command -v brew >/dev/null 2>&1; then
+    warn "Homebrew not found, skipping Ghostty install"
+    return
+  fi
+
+  if brew list --cask ghostty >/dev/null 2>&1; then
+    return
+  fi
+
+  log "Installing Ghostty via Homebrew cask..."
+  run_cmd brew install --cask ghostty
+}
+
+install_opencode() {
+  local os="$1"
+  if [ "$os" != "macos" ]; then
+    return
+  fi
+
+  if command -v opencode >/dev/null 2>&1; then
+    return
+  fi
+
+  log "Installing OpenCode CLI via official installer..."
+  run_cmd_bash "curl -fsSL https://opencode.ai/install | bash"
+
+  if [ -d "$HOME/.opencode/bin" ]; then
+    export PATH="$HOME/.opencode/bin:$PATH"
+  fi
+}
+
 install_nvm() {
   local nvm_dir="$HOME/.nvm"
 
@@ -443,6 +516,10 @@ main() {
 
   install_zinit
   install_tpm
+  install_tpm_plugins
+  install_meslo_font "$os"
+  install_ghostty "$os"
+  install_opencode "$os"
 
   link_dotfiles
   link_ghostty_config "$os"

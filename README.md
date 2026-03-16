@@ -19,7 +19,7 @@ cd ~/.dotfiles
 ./install.sh
 ```
 
-The installer handles package dependencies (brew/apt/pacman), nvm, and Node LTS.
+The installer handles package dependencies (brew/apt/pacman), nvm, Node LTS, tmux plugins, and on macOS installs Meslo Nerd Font + Ghostty + OpenCode CLI.
 
 ### Installer Options
 
@@ -85,6 +85,8 @@ After installation, reload tmux so it picks up the new config:
 ```bash
 tmux source-file ~/.tmux.conf
 ```
+
+If window styling still looks plain, install plugins once from inside tmux with `prefix + I`.
 
 ### Neovim Plugins
 
@@ -183,9 +185,15 @@ The config will already be linked at `~/.config/ghostty/config` after running th
 
 ### OpenCode CLI
 
-1. Follow the official OpenCode install instructions for your platform.
-2. Ensure the `opencode` binary is on your PATH (the default installer uses `~/.opencode/bin`).
-3. Verify with:
+On macOS, `./install.sh` installs OpenCode automatically using the official installer.
+
+For manual install (or non-macOS), run:
+
+```bash
+curl -fsSL https://opencode.ai/install | bash
+```
+
+Ensure the `opencode` binary is on your PATH (the default installer uses `~/.opencode/bin`), then verify with:
 
 ```bash
 opencode --version

@@ -38,4 +38,4 @@ setopt extendedglob
 autoload -Uz compinit && compinit
 
 # opencode
-export PATH=/Users/joedriver/.opencode/bin:$PATH
+export PATH="$HOME/.opencode/bin:$PATH"
