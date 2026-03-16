@@ -32,7 +32,7 @@ This repository provides a standardized development environment for macOS and Li
 - `ghostty/config`
 - `starship.toml`
 - `opencode/opencode.json`, `opencode/agents/*.md`
-- `KEYBINDS.md`, `glow/catppuccin-mocha.json`
+- `KEYBINDS.md`
 
 ## Assumptions
 - Users have or will install core tools (git, zsh, starship, node, nvm).
