@@ -19,7 +19,7 @@ tproj() {
   if tmux has-session -t "$name" 2>/dev/null; then
     if ! tmux list-windows -t "$name" -F '#W' | grep -q '^Cheatsheet$'; then
       tmux new-window -t "$name" -n "Cheatsheet" -c "$dir"
-      tmux send-keys -t "$name":Cheatsheet "glow -p -s ~/.dotfiles/glow/catppuccin-mocha.json ~/.dotfiles/KEYBINDS.md" C-m
+      tmux send-keys -t "$name":Cheatsheet "less -R ~/.dotfiles/KEYBINDS.md" C-m
     fi
     tmux attach -t "$name"
     return
@@ -33,8 +33,8 @@ tproj() {
   tmux new-window -t "$name":4 -n " Shell 3" -c "$dir"
   tmux new-window -t "$name":5 -n " OpenCode" -c "$dir"
   tmux send-keys -t "$name":5 "opencode" C-m
-  tmux new-window -t "$name" -n " Cheatsheet" -c "$dir"
-  tmux send-keys -t "$name":Cheatsheet "glow -p -s ~/.dotfiles/glow/catppuccin-mocha.json ~/.dotfiles/KEYBINDS.md" C-m
+  tmux new-window -t "$name":6 -n " Cheatsheet" -c "$dir"
+  tmux send-keys -t "$name":6 "less -R ~/.dotfiles/KEYBINDS.md" C-m
 
   tmux select-window -t "$name":1
   tmux attach -t "$name"
