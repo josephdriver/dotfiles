@@ -101,6 +101,24 @@ append_line_once() {
   fi
 }
 
+write_file_if_missing() {
+  local file="$1"
+  local content="$2"
+
+  if [ -f "$file" ]; then
+    return
+  fi
+
+  ensure_dir "$(dirname "$file")"
+
+  if [ "$DRY_RUN" -eq 1 ]; then
+    printf "+ create %s\n" "$file"
+    return
+  fi
+
+  printf "%s\n" "$content" > "$file"
+}
+
 detect_os() {
   local uname_out
   uname_out="$(uname -s)"
@@ -454,6 +472,52 @@ ensure_neovim_hook() {
   append_line_once "$HOME/.config/nvim/lua/config/autocmds.lua" 'require("custom.config")'
 }
 
+ensure_lazyvim_bootstrap() {
+  local nvim_dir="$HOME/.config/nvim"
+
+  write_file_if_missing "$nvim_dir/init.lua" 'require("config.lazy")'
+
+  write_file_if_missing "$nvim_dir/lua/config/lazy.lua" 'local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+  local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+  local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
+  if vim.v.shell_error ~= 0 then
+    vim.api.nvim_echo({
+      { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
+      { out, "WarningMsg" },
+      { "\nPress any key to exit..." },
+    }, true, {})
+    vim.fn.getchar()
+    os.exit(1)
+  end
+end
+vim.opt.rtp:prepend(lazypath)
+
+require("lazy").setup({
+  spec = {
+    { "LazyVim/LazyVim", import = "lazyvim.plugins" },
+    { import = "plugins" },
+  },
+  defaults = {
+    lazy = false,
+    version = false,
+  },
+  install = { colorscheme = { "tokyonight", "habamax" } },
+  checker = { enabled = true },
+  performance = {
+    rtp = {
+      disabled_plugins = {
+        "gzip",
+        "tarPlugin",
+        "tohtml",
+        "tutor",
+        "zipPlugin",
+      },
+    },
+  },
+})'
+}
+
 usage() {
   cat <<'EOF'
 Usage: ./install.sh [options]
@@ -523,6 +587,7 @@ main() {
 
   link_dotfiles
   link_ghostty_config "$os"
+  ensure_lazyvim_bootstrap
   ensure_neovim_hook
   set_default_shell
 
