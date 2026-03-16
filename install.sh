@@ -496,7 +496,6 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
   spec = {
     { "LazyVim/LazyVim", import = "lazyvim.plugins" },
-    { import = "plugins" },
   },
   defaults = {
     lazy = false,
@@ -516,6 +515,28 @@ require("lazy").setup({
     },
   },
 })'
+}
+
+fix_lazyvim_plugins_import() {
+  local lazy_file="$HOME/.config/nvim/lua/config/lazy.lua"
+  local plugins_dir="$HOME/.config/nvim/lua/plugins"
+
+  if [ ! -f "$lazy_file" ] || [ -d "$plugins_dir" ]; then
+    return
+  fi
+
+  if ! grep -qF '{ import = "plugins" },' "$lazy_file" 2>/dev/null; then
+    return
+  fi
+
+  log "Updating LazyVim bootstrap to remove missing plugins import..."
+
+  if [ "$DRY_RUN" -eq 1 ]; then
+    printf "+ patch %s\n" "$lazy_file"
+    return
+  fi
+
+  run_cmd python3 -c "from pathlib import Path; p=Path('$lazy_file'); t=p.read_text(); p.write_text(t.replace('    { import = \"plugins\" },\\n', ''))"
 }
 
 usage() {
@@ -588,6 +609,7 @@ main() {
   link_dotfiles
   link_ghostty_config "$os"
   ensure_lazyvim_bootstrap
+  fix_lazyvim_plugins_import
   ensure_neovim_hook
   set_default_shell
 
