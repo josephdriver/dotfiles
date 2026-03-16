@@ -13,8 +13,14 @@ tproj() {
   fi
 
   name="${dir##*/}"
+  name="${name#.}"
+  name="${name//./-}"
 
   if tmux has-session -t "$name" 2>/dev/null; then
+    if ! tmux list-windows -t "$name" -F '#W' | grep -q '^Cheatsheet$'; then
+      tmux new-window -t "$name" -n "Cheatsheet" -c "$dir"
+      tmux send-keys -t "$name":Cheatsheet "glow -p -s ~/.dotfiles/glow/catppuccin-mocha.json ~/.dotfiles/KEYBINDS.md" C-m
+    fi
     tmux attach -t "$name"
     return
   fi
@@ -27,6 +33,8 @@ tproj() {
   tmux new-window -t "$name":4 -n " Shell 3" -c "$dir"
   tmux new-window -t "$name":5 -n " OpenCode" -c "$dir"
   tmux send-keys -t "$name":5 "opencode" C-m
+  tmux new-window -t "$name" -n " Cheatsheet" -c "$dir"
+  tmux send-keys -t "$name":Cheatsheet "glow -p -s ~/.dotfiles/glow/catppuccin-mocha.json ~/.dotfiles/KEYBINDS.md" C-m
 
   tmux select-window -t "$name":1
   tmux attach -t "$name"
