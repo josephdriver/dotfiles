@@ -23,6 +23,7 @@ cd ~/.dotfiles
 - **Starship** - Cross-shell prompt
 - **Ghostty** - Terminal emulator config (macOS)
 - **Tmux** - Terminal multiplexer config
+- **OpenCode** - Agent definitions and config
 
 ## Prerequisites by Platform
 
@@ -69,6 +70,14 @@ chsh -s /bin/zsh
 
 ## Post-Install Setup
 
+### Tmux
+
+After installation, reload tmux so it picks up the new config:
+
+```bash
+tmux source-file ~/.tmux.conf
+```
+
 ### Neovim Plugins
 
 1. Open Neovim: `nvim`
@@ -92,6 +101,15 @@ This ensures:
 
 ## Usage
 
+### OpenCode Agents
+
+Two custom subagents are included for OpenCode:
+
+- `@research` for structured research briefs and planning inputs
+- `@code-review` for security, performance, and readability-focused reviews
+
+Agent definitions live in `opencode/agents`. The base config is `opencode/opencode.json`.
+
 ### Formatting
 
 Auto-format on save is enabled for:
@@ -114,6 +132,8 @@ See `:Telescope keymaps` for all keybindings in LazyVim.
 - **nvim/lazyvim.json** - LazyVim extras (enabled via `:LazyExtras`)
 - **zsh/aliases.zsh** - Custom aliases
 - **zsh/path.zsh** - Custom PATH additions
+- **opencode/agents** - OpenCode custom agents
+- **opencode/opencode.json** - OpenCode config
 
 ## Troubleshooting
 

@@ -1,6 +1,11 @@
 # === PATHs ===
 source ~/.dotfiles/zsh/path.zsh
 
+# Ensure tmux works under Ghostty
+if [ "$TERM" = "xterm-ghostty" ]; then
+  export TERM=xterm-256color
+fi
+
 # === Aliases ===
 source ~/.dotfiles/zsh/aliases.zsh
 
@@ -31,3 +36,6 @@ setopt extendedglob
 
 # === Optional utilities ===
 autoload -Uz compinit && compinit
+
+# opencode
+export PATH=/Users/joedriver/.opencode/bin:$PATH

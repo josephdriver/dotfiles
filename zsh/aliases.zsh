@@ -3,6 +3,35 @@ alias l="ls -lah"
 alias v="nvim"
 alias t="tmux"
 
+tproj() {
+  local dir="${1:-$PWD}"
+  local name
+
+  if [ ! -d "$dir" ]; then
+    echo "usage: tproj [path]"
+    return 1
+  fi
+
+  name="${dir##*/}"
+
+  if tmux has-session -t "$name" 2>/dev/null; then
+    tmux attach -t "$name"
+    return
+  fi
+
+  tmux new-session -d -s "$name" -c "$dir" -n " Editor"
+  tmux send-keys -t "$name":1 "nvim ." C-m
+
+  tmux new-window -t "$name":2 -n " Shell 1" -c "$dir"
+  tmux new-window -t "$name":3 -n " Shell 2" -c "$dir"
+  tmux new-window -t "$name":4 -n " Shell 3" -c "$dir"
+  tmux new-window -t "$name":5 -n " OpenCode" -c "$dir"
+  tmux send-keys -t "$name":5 "opencode" C-m
+
+  tmux select-window -t "$name":1
+  tmux attach -t "$name"
+}
+
 # Git
 alias gs="git status"
 alias gl="git log --oneline"
