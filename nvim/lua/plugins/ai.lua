@@ -10,7 +10,7 @@ return {
     "zbirenbaum/copilot.lua",
     enabled = provider == "copilot",
     cmd = "Copilot",
-    event = "BufReadPost",
+    event = "InsertEnter",
     build = ":Copilot auth",
     opts = function()
       local opts = vim.tbl_deep_extend("force", {
@@ -37,13 +37,6 @@ return {
         hide_during_completion = not ghost_text,
       }, opts.suggestion or {})
 
-      return opts
-    end,
-  },
-  {
-    "zbirenbaum/copilot.lua",
-    enabled = provider == "copilot",
-    opts = function()
       LazyVim.cmp.actions.ai_accept = function()
         if require("copilot.suggestion").is_visible() then
           LazyVim.create_undo()
@@ -51,6 +44,8 @@ return {
           return true
         end
       end
+
+      return opts
     end,
   },
   {
@@ -87,13 +82,6 @@ return {
         enabled = ghost_text,
       }, opts.virtual_text or {})
 
-      return opts
-    end,
-  },
-  {
-    "Exafunction/codeium.nvim",
-    enabled = provider == "codeium",
-    opts = function()
       LazyVim.cmp.actions.ai_accept = function()
         if require("codeium.virtual_text").get_current_completion_item() then
           LazyVim.create_undo()
@@ -101,6 +89,8 @@ return {
           return true
         end
       end
+
+      return opts
     end,
   },
 }
