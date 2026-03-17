@@ -1,4 +1,8 @@
 return {
   autoformat = false,
   format_patterns = { "*.js", "*.ts", "*.jsx", "*.tsx" },
+  ai = {
+    provider = "copilot",
+    mode = "ghost_text",
+  },
 }
