@@ -129,28 +129,58 @@ Manual format: `gq` in Normal mode or `:ConformInfo` to see available formatters
 
 ### Machine-Specific Neovim Config
 
-If you want to customize `nvim/` on one machine without committing those changes, mark the tracked Neovim files as local-only:
+Shared Neovim settings belong in `nvim/lua/custom/config.lua`. This repo loads an optional machine-specific override file from `nvim/lua/custom/local.lua` with `pcall(require, "custom.local")`.
 
-```bash
-git update-index --skip-worktree nvim/lazyvim.json nvim/lua/custom/config.lua nvim/lua/custom/custom
-printf "\nnvim/\n" >> .git/info/exclude
+Use `nvim/lua/custom/config.lua` for settings you want on every machine, such as tab width:
+
+```lua
+vim.opt.tabstop = 4
+vim.opt.softtabstop = 4
+vim.opt.shiftwidth = 4
 ```
 
-This keeps your local Neovim config out of normal git status while leaving the repository version intact for other machines.
+Use `nvim/lua/custom/local.lua` only for machine-specific behavior you do not want to commit.
 
-To make git track those files again on this machine:
-
-```bash
-git update-index --no-skip-worktree nvim/lazyvim.json nvim/lua/custom/config.lua nvim/lua/custom/custom
-```
-
-To verify the files are marked local-only, run:
+An example override lives in `nvim/lua/custom/local.lua.example`. Copy it to `nvim/lua/custom/local.lua` and edit as needed:
 
 ```bash
-git ls-files -v nvim/lazyvim.json nvim/lua/custom/config.lua nvim/lua/custom/custom
+cp nvim/lua/custom/local.lua.example nvim/lua/custom/local.lua
 ```
 
-Files prefixed with `S` are using `skip-worktree`.
+Example local override:
+
+```lua
+vim.g.autoformat = false
+```
+
+`nvim/lua/custom/local.lua` is ignored by the repo, so it stays machine-specific by default.
+
+If you also want to ignore it only locally without touching tracked ignore rules, you can use:
+
+```bash
+printf "\nnvim/lua/custom/local.lua\n" >> .git/info/exclude
+```
+
+If `nvim/lua/custom/local.lua` was accidentally added to git before, remove it from the index once and keep the file locally:
+
+```bash
+git rm --cached nvim/lua/custom/local.lua
+```
+
+To verify that only the local override is untracked, run:
+
+```bash
+git status --short
+```
+
+If you want to make shared Neovim changes to the repo, edit the tracked files normally and commit them as usual:
+
+```bash
+git add nvim/lua/custom/config.lua README.md
+git commit -m "update neovim defaults"
+```
+
+Keep `nvim/lua/custom/local.lua` out of commits so it stays machine-specific.
 
 ### Linting
 
@@ -163,6 +193,8 @@ See `:Telescope keymaps` for all keybindings in LazyVim.
 ## Customization
 
 - **nvim/lua/custom/config.lua** - Custom Neovim config
+- **nvim/lua/custom/local.lua.example** - Example machine-specific Neovim override
+- **nvim/lua/custom/local.lua** - Optional machine-specific Neovim overrides
 - **nvim/lazyvim.json** - LazyVim extras (enabled via `:LazyExtras`)
 - **zsh/aliases.zsh** - Custom aliases
 - **zsh/path.zsh** - Custom PATH additions
