@@ -124,9 +124,33 @@ Agent definitions live in `opencode/agents`. The base config is `opencode/openco
 
 Auto-format on save is enabled for:
 - JavaScript/TypeScript (`.js`, `.ts`, `.jsx`, `.tsx`)
-- JSON, CSS, SCSS, HTML
 
 Manual format: `gq` in Normal mode or `:ConformInfo` to see available formatters
+
+### Machine-Specific Neovim Config
+
+If you want to customize `nvim/` on one machine without committing those changes, mark the tracked Neovim files as local-only:
+
+```bash
+git update-index --skip-worktree nvim/lazyvim.json nvim/lua/custom/config.lua nvim/lua/custom/custom
+printf "\nnvim/\n" >> .git/info/exclude
+```
+
+This keeps your local Neovim config out of normal git status while leaving the repository version intact for other machines.
+
+To make git track those files again on this machine:
+
+```bash
+git update-index --no-skip-worktree nvim/lazyvim.json nvim/lua/custom/config.lua nvim/lua/custom/custom
+```
+
+To verify the files are marked local-only, run:
+
+```bash
+git ls-files -v nvim/lazyvim.json nvim/lua/custom/config.lua nvim/lua/custom/custom
+```
+
+Files prefixed with `S` are using `skip-worktree`.
 
 ### Linting
 
