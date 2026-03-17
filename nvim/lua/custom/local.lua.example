@@ -1,1 +1,4 @@
-vim.g.autoformat = false
+return {
+  autoformat = false,
+  format_patterns = { "*.js", "*.ts", "*.jsx", "*.tsx" },
+}
