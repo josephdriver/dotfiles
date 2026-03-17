@@ -139,7 +139,7 @@ vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 ```
 
-Use `nvim/lua/custom/local.lua` only for machine-specific behavior you do not want to commit.
+Use `nvim/lua/custom/local.lua` only for machine-specific behavior you do not want to commit. The file is optional; if it does not exist, the shared defaults in `nvim/lua/custom/config.lua` are used as-is.
 
 An example override lives in `nvim/lua/custom/local.lua.example`. Copy it to `nvim/lua/custom/local.lua` and edit as needed:
 
@@ -147,10 +147,18 @@ An example override lives in `nvim/lua/custom/local.lua.example`. Copy it to `nv
 cp nvim/lua/custom/local.lua.example nvim/lua/custom/local.lua
 ```
 
+The local override file should return a Lua table. Both keys are optional:
+
+- `autoformat` - overrides `vim.g.autoformat`
+- `format_patterns` - overrides the `BufWritePre` file patterns used by `conform`
+
 Example local override:
 
 ```lua
-vim.g.autoformat = false
+return {
+  autoformat = false,
+  format_patterns = { "*.js", "*.ts", "*.jsx", "*.tsx" },
+}
 ```
 
 `nvim/lua/custom/local.lua` is ignored by the repo, so it stays machine-specific by default.
