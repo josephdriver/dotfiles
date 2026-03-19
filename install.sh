@@ -451,6 +451,8 @@ link_dotfiles() {
   link_item "$SCRIPT_DIR/zsh/.zshrc" "$HOME/.zshrc"
   link_item "$SCRIPT_DIR/starship.toml" "$HOME/.config/starship.toml"
   link_item "$SCRIPT_DIR/nvim/lua/custom" "$HOME/.config/nvim/lua/custom"
+  link_item "$SCRIPT_DIR/nvim/lua/plugins" "$HOME/.config/nvim/lua/plugins"
+  link_item "$SCRIPT_DIR/nvim/lua/config" "$HOME/.config/nvim/lua/config"
   link_item "$SCRIPT_DIR/nvim/lazyvim.json" "$HOME/.config/nvim/lazyvim.json"
   link_item "$SCRIPT_DIR/tmux/.tmux.conf" "$HOME/.tmux.conf"
   link_item "$SCRIPT_DIR/opencode/agents" "$HOME/.config/opencode/agents"

@@ -122,8 +122,11 @@ Agent definitions live in `opencode/agents`. The base config is `opencode/openco
 
 ### Formatting
 
-Auto-format on save is enabled for:
+Shared auto-format on save is enabled for:
 - JavaScript/TypeScript (`.js`, `.ts`, `.jsx`, `.tsx`)
+- JSON, CSS, SCSS, HTML
+
+Machine-specific overrides can narrow that list with `nvim/lua/custom/local.lua`.
 
 Manual format: `gq` in Normal mode or `:ConformInfo` to see available formatters
 
@@ -147,10 +150,12 @@ An example override lives in `nvim/lua/custom/local.lua.example`. Copy it to `nv
 cp nvim/lua/custom/local.lua.example nvim/lua/custom/local.lua
 ```
 
-The local override file should return a Lua table. Both keys are optional:
+The local override file should return a Lua table. All keys are optional:
 
 - `autoformat` - overrides `vim.g.autoformat`
 - `format_patterns` - overrides the `BufWritePre` file patterns used by `conform`
+- `ai.provider` - selects the AI autocomplete provider: `"copilot"`, `"codeium"`, or `"none"`
+- `ai.mode` - selects how AI suggestions are shown; `"ghost_text"` is the current shared default
 
 Example local override:
 
@@ -158,8 +163,41 @@ Example local override:
 return {
   autoformat = false,
   format_patterns = { "*.js", "*.ts", "*.jsx", "*.tsx" },
+  ai = {
+    provider = "copilot",
+    mode = "ghost_text",
+  },
 }
 ```
+
+Example per-machine AI setups:
+
+```lua
+ai = {
+  provider = "copilot",
+  mode = "ghost_text",
+}
+```
+
+```lua
+ai = {
+  provider = "codeium",
+  mode = "ghost_text",
+}
+```
+
+```lua
+ai = {
+  provider = "none",
+}
+```
+
+Shared AI plugin wiring lives in `nvim/lua/plugins/ai.lua`. That file reads your local override and loads Copilot, Codeium, or no AI plugin at all. Authentication stays local to each machine.
+
+For auth:
+
+- Copilot - install the plugin, open Neovim, and run `:Copilot auth`
+- Codeium - install the plugin, open Neovim, and run `:Codeium Auth`
 
 `nvim/lua/custom/local.lua` is ignored by the repo, so it stays machine-specific by default.
 
@@ -198,11 +236,15 @@ ESLint errors show as diagnostics (red highlights). Triggered on save.
 
 See `:Telescope keymaps` for all keybindings in LazyVim.
 
+Note: this setup uses LazyVim's default picker bindings like `<leader>ff`, which route through Snacks picker unless you explicitly call `:Telescope`.
+
 ## Customization
 
 - **nvim/lua/custom/config.lua** - Custom Neovim config
+- **nvim/lua/custom/settings.lua** - Shared Neovim defaults merged with local overrides
 - **nvim/lua/custom/local.lua.example** - Example machine-specific Neovim override
 - **nvim/lua/custom/local.lua** - Optional machine-specific Neovim overrides
+- **nvim/lua/plugins/ai.lua** - Shared AI autocomplete provider selector
 - **nvim/lazyvim.json** - LazyVim extras (enabled via `:LazyExtras`)
 - **zsh/aliases.zsh** - Custom aliases
 - **zsh/path.zsh** - Custom PATH additions
