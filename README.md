@@ -236,6 +236,8 @@ ESLint errors show as diagnostics (red highlights). Triggered on save.
 
 See `:Telescope keymaps` for all keybindings in LazyVim.
 
+Note: this setup uses LazyVim's default picker bindings like `<leader>ff`, which route through Snacks picker unless you explicitly call `:Telescope`.
+
 ## Customization
 
 - **nvim/lua/custom/config.lua** - Custom Neovim config
