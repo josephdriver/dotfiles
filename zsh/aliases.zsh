@@ -6,6 +6,7 @@ alias t="tmux"
 tproj() {
   local dir="${1:-$PWD}"
   local name
+  local dotfiles_dir="${DOTFILES_DIR:-$HOME/.dotfiles}"
 
   if [ ! -d "$dir" ]; then
     echo "usage: tproj [path]"
@@ -19,7 +20,7 @@ tproj() {
   if tmux has-session -t "$name" 2>/dev/null; then
     if ! tmux list-windows -t "$name" -F '#W' | grep -q '^Cheatsheet$'; then
       tmux new-window -t "$name" -n "Cheatsheet" -c "$dir"
-      tmux send-keys -t "$name":Cheatsheet "less -R ~/.dotfiles/KEYBINDS.md" C-m
+      tmux send-keys -t "$name":Cheatsheet "less -R $dotfiles_dir/KEYBINDS.md" C-m
     fi
     tmux attach -t "$name"
     return
@@ -31,10 +32,15 @@ tproj() {
   tmux new-window -t "$name":2 -n " Shell 1" -c "$dir"
   tmux new-window -t "$name":3 -n " Shell 2" -c "$dir"
   tmux new-window -t "$name":4 -n " Shell 3" -c "$dir"
-  tmux new-window -t "$name":5 -n " OpenCode" -c "$dir"
-  tmux send-keys -t "$name":5 "opencode" C-m
-  tmux new-window -t "$name":6 -n " Cheatsheet" -c "$dir"
-  tmux send-keys -t "$name":6 "less -R ~/.dotfiles/KEYBINDS.md" C-m
+  if command -v opencode >/dev/null 2>&1; then
+    tmux new-window -t "$name":5 -n " OpenCode" -c "$dir"
+    tmux send-keys -t "$name":5 "opencode" C-m
+    tmux new-window -t "$name":6 -n " Cheatsheet" -c "$dir"
+    tmux send-keys -t "$name":6 "less -R $dotfiles_dir/KEYBINDS.md" C-m
+  else
+    tmux new-window -t "$name":5 -n " Cheatsheet" -c "$dir"
+    tmux send-keys -t "$name":5 "less -R $dotfiles_dir/KEYBINDS.md" C-m
+  fi
 
   tmux select-window -t "$name":1
   tmux attach -t "$name"

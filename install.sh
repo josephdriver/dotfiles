@@ -352,21 +352,40 @@ install_meslo_font() {
 
 install_ghostty() {
   local os="$1"
-  if [ "$os" != "macos" ]; then
+  local pm="$2"
+
+  if command -v ghostty >/dev/null 2>&1; then
     return
   fi
 
-  if ! command -v brew >/dev/null 2>&1; then
-    warn "Homebrew not found, skipping Ghostty install"
+  if [ "$os" = "macos" ]; then
+    if ! command -v brew >/dev/null 2>&1; then
+      warn "Homebrew not found, skipping Ghostty install"
+      return
+    fi
+
+    if brew list --cask ghostty >/dev/null 2>&1; then
+      return
+    fi
+
+    log "Installing Ghostty via Homebrew cask..."
+    run_cmd brew install --cask ghostty
     return
   fi
 
-  if brew list --cask ghostty >/dev/null 2>&1; then
-    return
-  fi
-
-  log "Installing Ghostty via Homebrew cask..."
-  run_cmd brew install --cask ghostty
+  case "$pm" in
+    pacman)
+      log "Installing Ghostty via pacman..."
+      pm_install "$pm" ghostty
+      ;;
+    brew)
+      log "Installing Ghostty via Homebrew cask..."
+      run_cmd brew install --cask ghostty
+      ;;
+    apt)
+      warn "Ghostty is not configured for apt installs; install it manually if needed"
+      ;;
+  esac
 }
 
 install_opencode() {
@@ -416,11 +435,18 @@ install_node_lts() {
 }
 
 set_default_shell() {
+  local current_shell
+
   if [ "$SKIP_SHELL_CHANGE" -eq 1 ]; then
     return
   fi
 
-  if [ "${SHELL:-}" = "$(command -v zsh)" ]; then
+  current_shell="$(getent passwd "$(id -un)" | cut -d: -f7 2>/dev/null || true)"
+  if [ -z "$current_shell" ]; then
+    current_shell="${SHELL:-}"
+  fi
+
+  if [ "$current_shell" = "$(command -v zsh)" ]; then
     return
   fi
 
@@ -460,12 +486,6 @@ link_dotfiles() {
 }
 
 link_ghostty_config() {
-  local os="$1"
-  if [ "$os" != "macos" ]; then
-    log "Skipping Ghostty config (macOS only)"
-    return
-  fi
-
   ensure_dir "$HOME/.config/ghostty"
   link_item "$SCRIPT_DIR/ghostty/config" "$HOME/.config/ghostty/config"
 }
@@ -589,9 +609,9 @@ main() {
   fi
 
   if [ "$pm" = "apt" ]; then
-    install_packages "$pm" git curl zsh tmux neovim starship fzf ripgrep fd-find unzip build-essential xclip
+    install_packages "$pm" git curl zsh tmux neovim starship fzf ripgrep fd-find unzip build-essential xclip wl-clipboard
   elif [ "$pm" = "pacman" ]; then
-    install_packages "$pm" git curl zsh tmux neovim starship fzf ripgrep fd unzip base-devel xclip
+    install_packages "$pm" git curl zsh tmux neovim starship fzf ripgrep fd unzip base-devel xclip wl-clipboard
   else
     install_packages "$pm" git curl zsh tmux neovim starship fzf ripgrep fd
   fi
@@ -605,7 +625,7 @@ main() {
   install_tpm
   install_tpm_plugins
   install_meslo_font "$os"
-  install_ghostty "$os"
+  install_ghostty "$os" "$pm"
   install_opencode "$os"
 
   link_dotfiles

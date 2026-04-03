@@ -1,5 +1,14 @@
 # === PATHs ===
-source ~/.dotfiles/zsh/path.zsh
+if [ -z "${DOTFILES_DIR:-}" ]; then
+  DOTFILES_DIR="${${(%):-%N}:A:h:h}"
+  if [ ! -f "$DOTFILES_DIR/zsh/path.zsh" ]; then
+    DOTFILES_DIR="${${(%):-%x}:A:h:h}"
+  fi
+  if [ ! -f "$DOTFILES_DIR/zsh/path.zsh" ] && [ -f "$HOME/.dotfiles/zsh/path.zsh" ]; then
+    DOTFILES_DIR="$HOME/.dotfiles"
+  fi
+fi
+source "$DOTFILES_DIR/zsh/path.zsh"
 
 # Ensure tmux works under Ghostty
 if [ "$TERM" = "xterm-ghostty" ]; then
@@ -7,7 +16,7 @@ if [ "$TERM" = "xterm-ghostty" ]; then
 fi
 
 # === Aliases ===
-source ~/.dotfiles/zsh/aliases.zsh
+source "$DOTFILES_DIR/zsh/aliases.zsh"
 
 # plugin manager
 source "$HOME/.zinit/bin/zinit.zsh"
