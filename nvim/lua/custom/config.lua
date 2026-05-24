@@ -1,6 +1,23 @@
 local settings = require("custom.settings").get()
 local keymap = vim.keymap.set
 
+vim.api.nvim_create_autocmd("User", {
+  pattern = "VeryLazy",
+  once = true,
+  callback = function()
+    local root = rawget(_G, "LazyVim") and LazyVim.root
+    local pattern = root and root.detectors and root.detectors.pattern
+    if type(pattern) ~= "function" then
+      return
+    end
+
+    root.detectors.pattern = function(buf, patterns)
+      local ok, paths = pcall(pattern, buf, patterns)
+      return ok and paths or {}
+    end
+  end,
+})
+
 
 -- centre after half-page jumps
 keymap("n", "<C-d>", "<C-d>zz")
