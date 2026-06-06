@@ -14,6 +14,11 @@ if [ -d "$HOME/.linuxbrew" ]; then
     export PATH="$HOME/.linuxbrew/sbin:$PATH"
 fi
 
+if [ -d "/home/linuxbrew/.linuxbrew" ]; then
+    export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
+    export PATH="/home/linuxbrew/.linuxbrew/sbin:$PATH"
+fi
+
 # Node.js & Composer paths
 export PATH="$HOME/.npm-global/bin:$PATH"
 export PATH="$HOME/.composer/vendor/bin:$PATH"
