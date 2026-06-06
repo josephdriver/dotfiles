@@ -9,6 +9,9 @@ if [ -z "${DOTFILES_DIR:-}" ]; then
   fi
 fi
 source "$DOTFILES_DIR/zsh/path.zsh"
+if [ -f "$DOTFILES_DIR/zsh/local.zsh" ]; then
+  source "$DOTFILES_DIR/zsh/local.zsh"
+fi
 
 # Ensure tmux works under Ghostty
 if [ "$TERM" = "xterm-ghostty" ]; then

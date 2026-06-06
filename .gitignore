@@ -1,1 +1,4 @@
 nvim/lua/custom/local.lua
+.DS_Store
+**/.DS_Store
+zsh/local.zsh
