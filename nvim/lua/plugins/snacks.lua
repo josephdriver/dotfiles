@@ -1,17 +1,21 @@
 return {
   {
     "folke/snacks.nvim",
-    opts = function(_, opts)
-      opts.picker = opts.picker or {}
-      opts.picker.sources = opts.picker.sources or {}
-      opts.picker.sources.files = vim.tbl_deep_extend("force", opts.picker.sources.files or {}, {
-        hidden = true,
-        ignored = true,
-      })
-      opts.picker.sources.grep = vim.tbl_deep_extend("force", opts.picker.sources.grep or {}, {
-        hidden = true,
-        ignored = true,
-      })
-    end,
+    keys = {
+      {
+        "<leader>fa",
+        function()
+          Snacks.picker.files({ hidden = true, ignored = true })
+        end,
+        desc = "Find All Files (Root Dir)",
+      },
+      {
+        "<leader>sA",
+        function()
+          Snacks.picker.grep({ hidden = true, ignored = true })
+        end,
+        desc = "Grep All Files (Root Dir)",
+      },
+    },
   },
 }

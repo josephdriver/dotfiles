@@ -39,3 +39,4 @@ autoload -Uz compinit && compinit
 
 # opencode
 export PATH="$HOME/.opencode/bin:$PATH"
+export PATH="/opt/homebrew/Cellar/postgresql@16/bin:$PATH"

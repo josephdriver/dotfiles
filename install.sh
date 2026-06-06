@@ -182,11 +182,31 @@ ensure_brew() {
   fi
 }
 
+cleanup_brew_taps() {
+  if ! command -v brew >/dev/null 2>&1; then
+    return
+  fi
+
+  local deprecated_taps=(
+    "homebrew/cask-fonts"
+    "homebrew/cask-versions"
+  )
+  local tap
+
+  for tap in "${deprecated_taps[@]}"; do
+    if brew tap | grep -qx "$tap"; then
+      warn "Removing deprecated Homebrew tap: $tap"
+      run_cmd brew untap "$tap"
+    fi
+  done
+}
+
 pm_update() {
   local pm="$1"
 
   case "$pm" in
     brew)
+      cleanup_brew_taps
       run_cmd brew update
       ;;
     apt)
@@ -346,7 +366,6 @@ install_meslo_font() {
   fi
 
   log "Installing Meslo Nerd Font via Homebrew cask..."
-  run_cmd brew tap homebrew/cask-fonts
   run_cmd brew install --cask font-meslo-lg-nerd-font
 }
 
